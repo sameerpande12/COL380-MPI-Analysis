@@ -53,11 +53,15 @@ int main(int argc, char**argv){
         int aCols = atoi(argv[2]);
         int bRows = aCols;
         int bCols = atoi(argv[3]);
+        int cRows = aRows;
+        int cCols = bCols;
 
         int aRowSize = aCols;
         int aColSize = aRows;
         int bRowSize = bCols;
         int bColSize = bRows;
+        int cRowSize = bCols;
+        int cColSize = aRows;
 
         float* A = (float *)malloc(sizeof(float)*aRows*aCols);
         float* B = (float *)malloc(sizeof(float)*bRows*bCols);
@@ -103,10 +107,9 @@ int main(int argc, char**argv){
             MPI_Recv(&numRowsReceived,1,MPI_INT,workerNumber,2,MPI_COMM_WORLD,&status);
             MPI_Recv(&startRow,1,MPI_INT,workerNumber,3,MPI_COMM_WORLD,&status);
 
+            MPI_Recv(&C[(startRow*cCols)],numRowsReceived * cCols,MPI_FLOAT,workerNumber,4,MPI_COMM_WORLD,&status);
 
-            MPI_Recv(&C[(startRow*bCols)],numRowsReceived * bCols,MPI_FLOAT,workerNumber,4,MPI_COMM_WORLD,&status);
 
-            
         }
 
 
