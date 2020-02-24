@@ -20,11 +20,24 @@ void Multiply_serial(float* A,float *B, float *C, int m,int n, int p ){
 int IsEqual(float *A, float *B, int m, int n){
     for(int i = 0;i<m;i++){
         for(int j = 0;j<n;j++){
-            if(A[i*n + j] != B[i*n + j])
-                return 0;
+            if(A[i*n + j] != B[i*n + j]){
+              printf("difference %d %d %f %f\n",i,j,A[i*n + j],B[i*n + j]);
+              return 0;
+            }
+
         }
     }
     return 1;
+}
+
+void printMatrix(float * matrix,int nrows,int ncols){
+  for(int i = 0;i < nrows ; i++){
+    for(int j = 0; j<ncols ; j++){
+      printf("%f ",matrix[i*ncols + j]);
+    }
+    printf("\n");
+  }
+  printf("\n");
 }
 
 int main(int argc, char**argv){
@@ -91,24 +104,13 @@ int main(int argc, char**argv){
             int numRowsReceived;
             MPI_Recv(&numRowsReceived,1,MPI_INT,workerNumber,2,MPI_COMM_WORLD,&status);
             MPI_Recv(C +(workerStartRow[workerNumber]*aRowSize),numRowsReceived * bCols,MPI_FLOAT,workerNumber,3,MPI_COMM_WORLD,&status);
+            printf("workerNumber = %d\n",workerNumber);
         }
 
-        for(int i = 0;i<bRows;i++){
-            for(int j=0;j<bCols;j++){
-              printf("%f ",C[i*bCols+j]);
-            }
-            printf("\n");
-        }
 
         float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
         Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
-        printf("\n");
-        for(int i = 0;i<bRows;i++){
-            for(int j=0;j<bCols;j++){
-              printf("%f ",C_serial[i*bCols+j]);
-            }
-            printf("\n");
-        }
+        printf("IsEqual = %d\n",IsEqual(C_serial,C,aRows,bCols));
     }
     else{
         MPI_Status status;
@@ -154,20 +156,4 @@ int main(int argc, char**argv){
 
     }
     MPI_Finalize();
-
-
-  // int N = atoi(argv[1]);
-  // printf("%d\n",N);
-  // MPI_Init(NULL,NULL);
-  // int world_size;
-  // MPI_Comm_size(MPI_COMM_WORLD,&world_size);
-  //
-  // int world_rank;
-  // MPI_Comm_rank(MPI_COMM_WORLD,&world_rank);
-  //
-  // char processor_name[MPI_MAX_PROCESSOR_NAME];
-  // int name_len;
-  // MPI_Get_processor_name(processor_name,&name_len);
-  // printf("Hello world from processor %s, rank %d out of %d processors\n",processor_name,world_rank,world_size);
-  // MPI_Finalize();
 }
