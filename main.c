@@ -102,7 +102,12 @@ int main(int argc, char**argv){
             int numRowsReceived;
             MPI_Recv(&numRowsReceived,1,MPI_INT,workerNumber,2,MPI_COMM_WORLD,&status);
             MPI_Recv(&startRow,1,MPI_INT,workerNumber,3,MPI_COMM_WORLD,&status);
-            MPI_Recv(C +(startRow*aRowSize),numRowsReceived * bCols,MPI_FLOAT,workerNumber,4,MPI_COMM_WORLD,&status);
+
+            printf("from worker = %d, numRowsReceived = %d, startRowIndex = %d\n",workerNumber,numRowsReceived,startRow);
+
+            MPI_Recv(&C[(startRow*aRowSize)],numRowsReceived * bCols,MPI_FLOAT,workerNumber,4,MPI_COMM_WORLD,&status);
+
+            printMatrix(C+startRow*aRowSize,numRowsReceived,bCols);
             // printf("workerNumber = %d\n",workerNumber);
         }
 
@@ -110,8 +115,8 @@ int main(int argc, char**argv){
         float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
         Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
 
-        // printMatrix(C,aRows,bCols);
-        printMatrix(C_serial,aRows,bCols);
+        printMatrix(C,aRows,bCols);
+        // printMatrix(C_serial,aRows,bCols);
         // printf("IsEqual = %d\n",IsEqual(C_serial,C,aRows,bCols));
     }
     else{
@@ -142,7 +147,7 @@ int main(int argc, char**argv){
 
         MPI_Recv(A_part,numRows * numColsA,MPI_FLOAT,source,2,MPI_COMM_WORLD,&status);
 
-        printf("Worker : rank = %d, rows = %d \n",rank,numRows);
+
         float * C = (float *)malloc(sizeof(float)*numRows*numColsB);
 
         for(int i = 0;i<numRows;i++){
@@ -153,7 +158,8 @@ int main(int argc, char**argv){
             }
           }
         }
-        printMatrix(C,numRows,numColsB);
+        // printf("Worker : rank = %d, rows = %d \n",rank,numRows);
+        // printMatrix(C,numRows,numColsB);
 
 
         MPI_Send(&numRows,1,MPI_INT,source,2,MPI_COMM_WORLD);
