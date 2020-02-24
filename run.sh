@@ -1,2 +1,2 @@
 mpicc main.c -o main.exe
-mpirun -np 8 ./main.exe 8
+mpirun -np 2 ./main.exe 5 5 5
