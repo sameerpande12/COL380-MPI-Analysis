@@ -46,12 +46,14 @@ int main(int argc, char**argv){
     MPI_Init(&argc,&argv);
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);
     MPI_Comm_size(MPI_COMM_WORLD,&numProcesses);
+    
     if(numProcesses<=1){
       printf("Number of Processes should be greater than 1\n");
       MPI_Finalize();
       return 0;
     }
     if(rank==0){
+        printf("Nonblocking\n");
         double beginTime = MPI_Wtime();
         int aRows = atoi(argv[1]);
         int aCols = atoi(argv[2]);
@@ -128,7 +130,7 @@ int main(int argc, char**argv){
 
         double endTime = MPI_Wtime();
 
-        printf("time = %lf seconds\n",endTime-beginTime);
+        printf("time = %lf seconds\n\n",endTime-beginTime);
         // float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
         // Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
         // printMatrix(C,aRows,bCols);
