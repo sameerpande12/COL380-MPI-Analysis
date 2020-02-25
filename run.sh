@@ -1,2 +1,2 @@
-mpicc main.c -o main.exe
-mpirun -np 8 ./main.exe 49 100 99
+mpicc main_collective.c -o main_collective.exe
+mpirun -np $2 ./main.exe $1 32 $1
