@@ -1,3 +1,5 @@
+i7 9th Gen , 12 Processors
+
 Nonblocking
 number of workers = 1
 time = 27.244150 seconds
