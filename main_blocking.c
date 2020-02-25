@@ -84,11 +84,12 @@ int main(int argc, char**argv){
         }
 
         int startRow = 0;
-        MPI_Bcast(&aCols,1,MPI_INT,0,MPI_COMM_WORLD);
-        MPI_Bcast(&bCols,1,MPI_INT,0,MPI_COMM_WORLD);
-        MPI_Bcast(B,bRowSize*bColSize,MPI_FLOAT,0,MPI_COMM_WORLD);
 
         for(int workerNumber = 1;workerNumber<=numWorkers;workerNumber++){
+        
+          MPI_Send(&aCols,1,MPI_INT,workerNumber,0,MPI_COMM_WORLD);
+          MPI_Send(&bCols,1,MPI_INT,workerNumber,0,MPI_COMM_WORLD);
+          MPI_Send(B,bRowSize*bColSize,MPI_FLOAT,workerNumber,0,MPI_COMM_WORLD);
 
           int numRowsSent = nRows;
           if(workerNumber <= numExtraRows)
@@ -128,15 +129,15 @@ int main(int argc, char**argv){
         startRow = 0;
         // printf("Worker Number = %d\n",rank);
 
-        MPI_Bcast(&numColsA,1,MPI_INT,source,MPI_COMM_WORLD);
+        MPI_Recv(&numColsA,1,MPI_INT,source,0,MPI_COMM_WORLD,&status);
         numRowsB = numColsA;
 
-        MPI_Bcast(&numColsB,1,MPI_INT,source,MPI_COMM_WORLD);
+        MPI_Recv(&numColsB,1,MPI_INT,source,0,MPI_COMM_WORLD,&status);
 
 
         float * B = (float *)malloc(sizeof(float)*numColsA * numColsB);
 
-        MPI_Bcast(B,numRowsB * numColsB,MPI_FLOAT,0,MPI_COMM_WORLD);
+        MPI_Recv(B,numRowsB * numColsB,MPI_FLOAT,source,0,MPI_COMM_WORLD,&status);
 
         MPI_Recv(&numRows,1,MPI_FLOAT,source,0,MPI_COMM_WORLD,&status);
 
