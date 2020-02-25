@@ -84,6 +84,8 @@ int main(int argc, char**argv){
         }
 
         int startRow = 0;
+        int startRowNumbers[numWorkers+1];
+        int rowSentNumbers[numWorkers+1];
 
         for(int workerNumber = 1;workerNumber<=numWorkers;workerNumber++){
         
@@ -97,6 +99,10 @@ int main(int argc, char**argv){
 
           MPI_Send(&numRowsSent,1,MPI_INT,workerNumber,0,MPI_COMM_WORLD);
           MPI_Send(&startRow,1,MPI_INT,workerNumber,1,MPI_COMM_WORLD);
+          startRowNumbers[workerNumber] = startRow;
+          rowSentNumbers[workerNumber] = numRowsSent;
+
+
           // printf("0 %d\n",numRowsSent * aRowSize);
           MPI_Send( A + startRow * aRowSize, numRowsSent * aRowSize,MPI_FLOAT,workerNumber,2,MPI_COMM_WORLD);
           startRow = startRow + numRowsSent;
@@ -105,9 +111,10 @@ int main(int argc, char**argv){
         MPI_Status status;
         for(int workerNumber =1; workerNumber <= numWorkers;workerNumber ++){
             int numRowsReceived;
-            MPI_Recv(&numRowsReceived,1,MPI_INT,workerNumber,2,MPI_COMM_WORLD,&status);
-            MPI_Recv(&startRow,1,MPI_INT,workerNumber,3,MPI_COMM_WORLD,&status);
-
+            // MPI_Recv(&numRowsReceived,1,MPI_INT,workerNumber,2,MPI_COMM_WORLD,&status);
+            // MPI_Recv(&startRow,1,MPI_INT,workerNumber,3,MPI_COMM_WORLD,&status);
+            numRowsReceived = rowSentNumbers[workerNumber];
+            startRow = startRowNumbers[workerNumber];
             MPI_Recv(&C[(startRow*cCols)],numRowsReceived * cCols,MPI_FLOAT,workerNumber,4,MPI_COMM_WORLD,&status);
 
 
@@ -116,7 +123,7 @@ int main(int argc, char**argv){
 
         float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
         Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
-
+        printMatrix(C,aRows,bCols);
         printf("IsEqual = %d\n",IsEqual(C_serial,C,aRows,bCols));
     }
     else{
@@ -161,8 +168,8 @@ int main(int argc, char**argv){
 
 
 
-        MPI_Send(&numRows,1,MPI_INT,source,2,MPI_COMM_WORLD);
-        MPI_Send(&startRow,1,MPI_INT,source,3,MPI_COMM_WORLD);
+        // MPI_Send(&numRows,1,MPI_INT,source,2,MPI_COMM_WORLD);
+        // MPI_Send(&startRow,1,MPI_INT,source,3,MPI_COMM_WORLD);
         MPI_Send(C,numRows*numColsB,MPI_INT,source,4,MPI_COMM_WORLD);
 
     }
