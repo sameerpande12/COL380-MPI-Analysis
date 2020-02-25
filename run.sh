@@ -1,2 +1,2 @@
-mpicc main_blocking.c -o main_blocking.exe
-mpirun -np $2 ./main_blocking.exe $1 32 $1
+mpicc main_collective.c -o main_collective.exe
+mpirun -np $2 ./main_collective.exe $1 32 $1
