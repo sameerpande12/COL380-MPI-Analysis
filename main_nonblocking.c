@@ -111,16 +111,16 @@ int main(int argc, char**argv){
         }
 
         MPI_Status status;
+        MPI_Request receivingRequests[numWorkers];
         for(int workerNumber =1; workerNumber <= numWorkers;workerNumber ++){
             int numRowsReceived;
-            // MPI_Recv(&numRowsReceived,1,MPI_INT,workerNumber,2,MPI_COMM_WORLD,&status);
-            // MPI_Recv(&startRow,1,MPI_INT,workerNumber,3,MPI_COMM_WORLD,&status);
+           
             numRowsReceived = rowSentNumbers[workerNumber];
             startRow = startRowNumbers[workerNumber];
-            MPI_Recv(&C[(startRow*cCols)],numRowsReceived * cCols,MPI_FLOAT,workerNumber,0,MPI_COMM_WORLD,&status);
-
-
+            MPI_Irecv(&C[(startRow*cCols)],numRowsReceived * cCols,MPI_FLOAT,workerNumber,0,MPI_COMM_WORLD,&receivingRequests[workerNumber-1]);
         }
+
+        MPI_Waitall(numWorkers,receivingRequests,MPI_STATUSES_IGNORE);
 
 
         float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
@@ -137,7 +137,7 @@ int main(int argc, char**argv){
         numRows = 0;
         startRow = 0;
         // printf("Worker Number = %d\n",rank);
-        MPI_Request requests[6];
+        MPI_Request requests[7];
         MPI_Irecv(&numColsA,1,MPI_INT,source,0,MPI_COMM_WORLD,&requests[0]);
         MPI_Irecv(&numColsB,1,MPI_INT,source,1,MPI_COMM_WORLD,&requests[1]);
         MPI_Waitall(2,requests,MPI_STATUSES_IGNORE);
@@ -174,7 +174,7 @@ int main(int argc, char**argv){
           }
         }
 
-        MPI_Send(C,numRows*numColsB,MPI_INT,source,0,MPI_COMM_WORLD);
+        MPI_Isend(C,numRows*numColsB,MPI_INT,source,0,MPI_COMM_WORLD,&requests[6]);
 
     }
     MPI_Finalize();
