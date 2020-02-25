@@ -48,7 +48,8 @@ int main(int argc, char**argv){
     MPI_Comm_size(MPI_COMM_WORLD,&numProcesses);
 
     if(rank==0){
-
+        double beginTime = MPI_Wtime();
+       
         int aRows = atoi(argv[1]);
         int aCols = atoi(argv[2]);
         int bRows = aCols;
@@ -82,6 +83,7 @@ int main(int argc, char**argv){
           nRows = aRows/numWorkers;
           numExtraRows = aRows%numWorkers;
         }
+        printf("number of workers = %d\n",numWorkers);
 
         int startRow = 0;
         MPI_Bcast(&aCols,1,MPI_INT,0,MPI_COMM_WORLD);
@@ -118,7 +120,10 @@ int main(int argc, char**argv){
 
 
         }
+        double endTime = MPI_Wtime();
 
+        printf("time = %lf seconds\n",endTime-beginTime);
+        
 
         float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
         Multiply_serial(A,B,C_serial,aRows,aCols,bCols);

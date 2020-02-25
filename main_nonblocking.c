@@ -48,7 +48,7 @@ int main(int argc, char**argv){
     MPI_Comm_size(MPI_COMM_WORLD,&numProcesses);
 
     if(rank==0){
-
+        double beginTime = MPI_Wtime();
         int aRows = atoi(argv[1]);
         int aCols = atoi(argv[2]);
         int bRows = aCols;
@@ -75,7 +75,7 @@ int main(int argc, char**argv){
           B[i] = ((float)rand()) / ((float)(RAND_MAX));
         }
         int numWorkers = numProcesses -1;
-
+        printf("number of workers = %d\n",numWorkers);
         int nRows=0;
         int numExtraRows = 0;
         if(numWorkers >=1){
@@ -122,11 +122,13 @@ int main(int argc, char**argv){
 
         MPI_Waitall(numWorkers,receivingRequests,MPI_STATUSES_IGNORE);
 
+        double endTime = MPI_Wtime();
 
-        float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
-        Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        printf("time = %lf seconds\n",endTime-beginTime);
+        // float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
+        // Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
         // printMatrix(C,aRows,bCols);
-        printf("IsEqual = %d\n",IsEqual(C_serial,C,aRows,bCols));
+        // printf("IsEqual = %d\n",IsEqual(C_serial,C,aRows,bCols));
     }
     else{
         MPI_Status status;
