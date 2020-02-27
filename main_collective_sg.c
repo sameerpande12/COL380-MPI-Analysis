@@ -59,7 +59,7 @@ int main(int argc, char**argv){
     
     if(rank==0){
 
-        printf("Collective \n");
+        printf("Collective SG \n");
         double beginTime = MPI_Wtime();
        
         int aRowsActual = atoi(argv[1]);
