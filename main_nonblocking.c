@@ -81,39 +81,53 @@ int main(int argc, char**argv){
           B[i] = ((float)rand()) / ((float)(RAND_MAX));
         }
         int numWorkers = numProcesses -1;
-        printf("number of workers = %d\n",numWorkers);
+        printf("number of processes = %d, number of additional labourers = %d\n",numProcesses,numWorkers);
         int nRows=0;
         int numExtraRows = 0;
-        if(numWorkers >=1){
-          nRows = aRows/numWorkers;
-          numExtraRows = aRows%numWorkers;
-        }
-
+        
+        nRows = aRows/numProcesses;
+        numExtraRows = aRows%numProcesses;
+      
         int startRow = 0;
         int startRowNumbers[numWorkers+1];
         int rowSentNumbers[numWorkers+1];
 
-        for(int workerNumber = 1;workerNumber<=numWorkers;workerNumber++){
-          MPI_Request requests[6];
-          MPI_Isend(&aCols,1,MPI_INT,workerNumber,0,MPI_COMM_WORLD,&requests[0]);
-          MPI_Isend(&bCols,1,MPI_INT,workerNumber,1,MPI_COMM_WORLD,&requests[1]);
+        for(int workerNumber = 0;workerNumber<=numWorkers;workerNumber++){
           
-          
-          MPI_Isend(B,bRowSize*bColSize,MPI_FLOAT,workerNumber,2,MPI_COMM_WORLD,&requests[2]);
-
           int numRowsSent = nRows;
-          if(workerNumber <= numExtraRows)
+          if(workerNumber < numExtraRows)//need strict inequality because using parent worker as well for computation
             numRowsSent++;//send additional row
 
-          MPI_Isend(&numRowsSent,1,MPI_INT,workerNumber,3,MPI_COMM_WORLD,&requests[3]);
-          MPI_Isend(&startRow,1,MPI_INT,workerNumber,4,MPI_COMM_WORLD,&requests[4]);
-          startRowNumbers[workerNumber] = startRow;
-          rowSentNumbers[workerNumber] = numRowsSent;
+          if(workerNumber > 0){
+            MPI_Request requests[6];
+            MPI_Isend(&aCols,1,MPI_INT,workerNumber,0,MPI_COMM_WORLD,&requests[0]);
+            MPI_Isend(&bCols,1,MPI_INT,workerNumber,1,MPI_COMM_WORLD,&requests[1]);
+            
+            
+            MPI_Isend(B,bRowSize*bColSize,MPI_FLOAT,workerNumber,2,MPI_COMM_WORLD,&requests[2]);
+
+            MPI_Isend(&numRowsSent,1,MPI_INT,workerNumber,3,MPI_COMM_WORLD,&requests[3]);
+            MPI_Isend(&startRow,1,MPI_INT,workerNumber,4,MPI_COMM_WORLD,&requests[4]);
+            startRowNumbers[workerNumber] = startRow;
+            rowSentNumbers[workerNumber] = numRowsSent;
 
 
-          // printf("0 %d\n",numRowsSent * aRowSize);
-          MPI_Isend( A + startRow * aRowSize, numRowsSent * aRowSize,MPI_FLOAT,workerNumber,5,MPI_COMM_WORLD,&requests[5]);
+            // printf("0 %d\n",numRowsSent * aRowSize);
+            MPI_Isend( A + startRow * aRowSize, numRowsSent * aRowSize,MPI_FLOAT,workerNumber,5,MPI_COMM_WORLD,&requests[5]);
+          }
+          if(workerNumber==0){
+            startRowNumbers[0] = startRow;
+            rowSentNumbers[0] = numRowsSent;
+          }
           startRow = startRow + numRowsSent;
+        }
+        for(int i = startRowNumbers[0];i<startRowNumbers[0]+rowSentNumbers[0];i++){
+          for(int j = 0;j<bCols;j++){
+            C[i*bCols + j ] = 0;
+            for(int k = 0;k<aCols;k++){
+              C[i*bCols+ j] += (A[i* aCols + k] * B[k * bCols+ j]);
+            }
+          }
         }
 
         MPI_Status status;
@@ -131,10 +145,10 @@ int main(int argc, char**argv){
         double endTime = MPI_Wtime();
 
         printf("time = %lf seconds\n\n",endTime-beginTime);
-        // float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
-        // Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
+        Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
         // printMatrix(C,aRows,bCols);
-        // printf("IsEqual = %d\n",IsEqual(C_serial,C,aRows,bCols));
+        printf("IsEqual = %d\n",IsEqual(C_serial,C,aRows,bCols));
     }
     else{
         MPI_Status status;
