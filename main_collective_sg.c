@@ -45,6 +45,7 @@ int main(int argc, char**argv){
     int rank,numProcesses;
     int aRowsActual;
     int aRows,aCols,bCols;
+    double begin,end;
 
     float* A,*B,*C;
     MPI_Init(&argc,&argv);
@@ -60,9 +61,9 @@ int main(int argc, char**argv){
     if(rank==0){
 
         printf("Collective SG \n");
-        double beginTime = MPI_Wtime();
+        
        
-        int aRowsActual = atoi(argv[1]);
+        aRowsActual = atoi(argv[1]);
 
         if( aRowsActual % numWorkers == 0 ){
             aRows = aRowsActual;
@@ -71,16 +72,11 @@ int main(int argc, char**argv){
             aRows = (aRowsActual/numWorkers + 1)*numWorkers; 
         }
 
-        printf("%d aRows\n",aRows);
-
-
         aCols = atoi(argv[2]);
-        printf("%d aCols\n",aCols);
         
         
         int bRows = aCols;
         bCols = atoi(argv[3]);
-        printf("%d bCols\n",bCols);
         
         
         int cRows = aRows;
@@ -109,6 +105,7 @@ int main(int argc, char**argv){
         for(int i =0 ;i<bRows*bCols;i++){
           B[i] = ((float)rand()) / ((float)(RAND_MAX));
         }
+        
 
         // MPI_Bcast(&aRows,1,MPI_INT,0,MPI_COMM_WORLD);
         // MPI_Bcast(&aCols,1,MPI_INT,0,MPI_COMM_WORLD);
@@ -116,19 +113,15 @@ int main(int argc, char**argv){
         // MPI_Bcast(B,aCols*bCols,MPI_FLOAT,0,MPI_COMM_WORLD);
 
     }
-
+    MPI_Barrier(MPI_COMM_WORLD);
+    begin = MPI_Wtime();
 
     MPI_Bcast(&aRows,1,MPI_INT,0,MPI_COMM_WORLD);
     MPI_Bcast(&aCols,1,MPI_INT,0,MPI_COMM_WORLD);
     MPI_Bcast(&bCols,1,MPI_INT,0,MPI_COMM_WORLD);
     
     MPI_Barrier(MPI_COMM_WORLD);//ensuring that all the values have been updated
-
-    // printf("aCols = %d, bCols = %d\n",aCols,bCols);   
     
-    MPI_Barrier(MPI_COMM_WORLD);
-    // printf("rank = %d, aRows = %d, aCols = %d, bCols = %d\n",rank,aRows,aCols,bCols);
-   
     float * A_part = (float*)malloc(aRows/numWorkers * aCols * sizeof(float));
     float * C_part = (float*)malloc(aRows/numWorkers * bCols * sizeof(float));
     B = (float *)malloc(aCols * bCols *sizeof(float)); 
@@ -152,7 +145,7 @@ int main(int argc, char**argv){
     }
 
     MPI_Gather(C_part,aRows/numWorkers * bCols, MPI_FLOAT,C,aRows/numWorkers * bCols,MPI_FLOAT,0,MPI_COMM_WORLD);
-    printf("rank = %d,  rowsReceived = %d\n",rank,rowsReceived);
+    // printf("rank = %d,  rowsReceived = %d\n",rank,rowsReceived);
     
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -161,24 +154,29 @@ int main(int argc, char**argv){
 
 
 
-
     
     if(rank == 0){
-
-        // float * C_actual;
-        // if(aRowsActual !=aRows){
-        //     C_actual = (float *)malloc( aRowsActual * bCols * sizeof(float));
-        //     for(int i = 0;i<aRowsActual*bCols;i++)
-        //         C_actual[i] = C[i];
+        end = MPI_Wtime();
+        float * C_actual;
+        // C_actual = (float *)malloc( aRowsActual * bCols * sizeof(float));
+        
+        // for(int i = 0;i<aRowsActual * bCols;i++){
+        //     C_actual[i]=C[i];
         // }
-        // else{
-        //     C_actual = C;
-        // }
+        if(aRowsActual !=aRows){
+            C_actual = (float *)malloc( aRowsActual * bCols * sizeof(float));
+            for(int i = 0;i<aRowsActual*bCols;i++)
+                C_actual[i] = C[i];
+        }
+        else{
+            C_actual = C;
+        }
 
         float * C_serial = (float *)malloc(sizeof(float)*aRows*bCols);
         Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
         
-        printf("%d \n",IsEqual(C_serial,C,aRows,bCols));
+        printf("time = %f seconds\n",end - begin);
+        printf("IsEqual = %d \n\n",IsEqual(C_serial,C,aRows,bCols));
 
     }
 
