@@ -95,4 +95,3 @@ time = 7.339533 seconds
 Collective 
 number of workers = 32
 time = 7.736594 seconds
-
