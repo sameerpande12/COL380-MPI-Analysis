@@ -4,15 +4,18 @@
 // #include <random>
 #include <time.h>
 #include <unistd.h>
+#include <omp.h>
 void Multiply_serial(float* A,float *B, float *C, int m,int n, int p ){
 //A is mXn,  B is n X p
   int i,j,k;
   for(i=0;i<m;i++){
     for(j=0;j<p;j++){
-      C[i*p+j]=0;
+      
+      float temp=0;
       for(k = 0;k<n;k++){
-        C[i*p + j] += A[i*n + k] * B[k * p + j];
+        temp += A[i*n + k] * B[k * p + j];
       }
+      C[i*p+j] = temp;
     }
   }
 }
@@ -41,6 +44,7 @@ void printMatrix(float * matrix,int nrows,int ncols){
 }
 
 int main(int argc, char**argv){
+        int threadCount = atoi(argv[4]);
         int aRows = atoi(argv[1]);
         int aCols = atoi(argv[2]);
         int bRows = aCols;
@@ -59,6 +63,8 @@ int main(int argc, char**argv){
         float* B = (float *)malloc(sizeof(float)*bRows*bCols);
         float* C = (float *)malloc(sizeof(float)*aRows*bCols);
 
+        float* C_serial = (float *)malloc(sizeof(float)*aRows*bCols);
+
         srand48(time(0));
         for(int i =0 ;i<aRows*aCols;i++){
           A[i] = ((float)rand()) / ((float)(RAND_MAX));
@@ -66,10 +72,33 @@ int main(int argc, char**argv){
         for(int i =0 ;i<bRows*bCols;i++){
           B[i] = ((float)rand()) / ((float)(RAND_MAX));
         }
-        double beginTime = MPI_Wtime();
-        Multiply_serial(A,B,C,aRows,aCols,bCols);
-        double endTime = MPI_Wtime();
+        // printMatrix(A,aRows,aCols);
+        double beginTime = omp_get_wtime();
+        // Multiply_serial(A,B,C,aRows,aCols,bCols);
+        
+        #pragma omp parallel
+        {
+            for(int i=0;i<aRows;i++){
+                for(int j=0;j<bCols;j++){
+            
+                    float temp=0;
+                    for(int k = 0;k<aCols;k++){
+                        temp += A[i*aCols + k] * B[k * bCols + j];
+                    }
+                    C[i*bCols+j] = temp;
+            }
+        }
+            
+        }
+        double endTime = omp_get_wtime();
+
+        printf("parallel time = %lf seconds, N=%d, numProcs = %d\n",endTime-beginTime,aRows,threadCount);
+        beginTime = omp_get_wtime();
+        Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        endTime = omp_get_wtime();
 
         printf("serial time = %lf seconds, N = %d\n",endTime-beginTime,aRows);
+
+        printf("%d isEqual ",IsEqual(C_serial,C,aRows,bCols));
 
 }
