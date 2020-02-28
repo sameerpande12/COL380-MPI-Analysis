@@ -70,6 +70,6 @@ int main(int argc, char**argv){
         Multiply_serial(A,B,C,aRows,aCols,bCols);
         double endTime = MPI_Wtime();
 
-        printf("serial time = %lf seconds, N = \n",endTime-beginTime,aRows);
+        printf("serial time = %lf seconds, N = %d\n",endTime-beginTime,aRows);
 
 }
