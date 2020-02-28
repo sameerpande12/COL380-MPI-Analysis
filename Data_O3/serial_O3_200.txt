@@ -1,0 +1,2 @@
+serial time = 0.000924 seconds, N = 200
+serial time = 0.003906 seconds, N = 200

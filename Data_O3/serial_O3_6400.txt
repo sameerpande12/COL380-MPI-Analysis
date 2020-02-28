@@ -1,0 +1,2 @@
+serial time = 1.354407 seconds, N = 6400
+serial time = 1.939534 seconds, N = 6400
