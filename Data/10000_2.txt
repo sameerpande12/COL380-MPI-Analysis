@@ -1,0 +1,3 @@
+nonblocking time = 14.675438 seconds
+blocking time = 15.626055 seconds
+collective time = 14.486507 seconds
