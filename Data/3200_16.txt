@@ -1,5 +1,4 @@
 nonblocking time = 0.432005 seconds
 blocking time = 0.864293 seconds
-serial time = 5.045217 seconds
 collective time = 0.702553 seconds
 collective sg time = 1.462179 seconds
