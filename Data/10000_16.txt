@@ -1,4 +1,5 @@
-nonblocking time = 2.324213 seconds
-blocking time = 2.810646 seconds
-collective time = 3.142821 seconds
-collective sg time = 3.183083 seconds
+nonblocking time = 2.358636 seconds
+blocking time = 2.933101 seconds
+collective time = 2.900187 seconds
+collective sg time = 3.087329 seconds
+omp time = 19.112103 seconds

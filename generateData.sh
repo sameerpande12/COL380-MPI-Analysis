@@ -67,3 +67,5 @@ bash run.sh 6400 16 > Data/6400_16.txt
 bash run.sh 8000 16 > Data/8000_16.txt
 bash run.sh 10000 16 > Data/10000_16.txt
 bash run.sh 12800 16 > Data/12800_16.txt
+
+bash generateSerialData.sh

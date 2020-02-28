@@ -12,3 +12,5 @@ mpirun -np $numProcesses ./main_collective.exe $1 32 $1
 
 mpicc main_collective_sg.c -o main_collective_sg.exe
 mpirun -np $numProcesses ./main_collective_sg.exe $1 32 $1
+
+bash run_omp.sh $1 32 $1 $numProcesses

@@ -92,13 +92,13 @@ int main(int argc, char**argv){
         }
         double endTime = omp_get_wtime();
 
-        printf("parallel time = %lf seconds, N=%d, numProcs = %d\n",endTime-beginTime,aRows,threadCount);
-        beginTime = omp_get_wtime();
-        Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
-        endTime = omp_get_wtime();
+        printf("omp time = %lf seconds\n",endTime-beginTime);
+        // beginTime = omp_get_wtime();
+        // Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        // endTime = omp_get_wtime();
 
-        printf("serial time = %lf seconds, N = %d\n",endTime-beginTime,aRows);
+        // printf("serial time = %lf seconds, N = %d\n",endTime-beginTime,aRows);
 
-        printf("%d isEqual ",IsEqual(C_serial,C,aRows,bCols));
+        // printf("%d isEqual ",IsEqual(C_serial,C,aRows,bCols));
 
 }
