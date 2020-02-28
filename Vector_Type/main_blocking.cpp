@@ -1,9 +1,10 @@
 #include </usr/include/mpi/mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
-// #include <random>
 #include <time.h>
 #include <unistd.h>
+#include<iostream>
+using namespace std;
 void Multiply_serial(float* A,float *B, float *C, int m,int n, int p ){
 //A is mXn,  B is n X p
   int i,j,k;
