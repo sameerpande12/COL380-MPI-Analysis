@@ -1,2 +1,2 @@
-serial time = 6.877596 seconds, N = 8000
-serial time = 6.393480 seconds, N = 8000
+serial time = 6.378609 seconds, N = 8000
+serial time = 6.398394 seconds, N = 8000
