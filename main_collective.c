@@ -145,8 +145,8 @@ int main(int argc, char**argv){
         printf("collective time = %lf seconds\n",endTime-beginTime);
         
 
-        float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
-        Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        // float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
+        // Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
         // printMatrix(C,aRows,bCols);
         // printMatrix(C_serial,aRows,bCols);
 

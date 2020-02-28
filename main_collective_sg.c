@@ -172,8 +172,8 @@ int main(int argc, char**argv){
             C_actual = C;
         }
 
-        float * C_serial = (float *)malloc(sizeof(float)*aRows*bCols);
-        Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        // float * C_serial = (float *)malloc(sizeof(float)*aRows*bCols);
+        // Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
         
         printf("collective sg time = %f seconds\n",end - begin);
         // printf("IsEqual = %d \n\n",IsEqual(C_serial,C,aRows,bCols));

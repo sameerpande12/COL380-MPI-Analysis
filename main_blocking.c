@@ -148,13 +148,13 @@ int main(int argc, char**argv){
         
 
         
-        float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
+        // float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
         
-        beginTime = MPI_Wtime();
-        Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
-        endTime = MPI_Wtime();
+        // beginTime = MPI_Wtime();
+        // Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        // endTime = MPI_Wtime();
 
-        printf("serial time = %lf seconds\n",endTime-beginTime);
+        // printf("serial time = %lf seconds\n",endTime-beginTime);
         
         // printMatrix(C,aRows,bCols);
         // printf("IsEqual = %d\n\n",IsEqual(C_serial,C,aRows,bCols));

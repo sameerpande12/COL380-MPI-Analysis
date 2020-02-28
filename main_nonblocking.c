@@ -146,8 +146,8 @@ int main(int argc, char**argv){
         double endTime = MPI_Wtime();
 
         printf("nonblocking time = %lf seconds\n",endTime-beginTime);
-        float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
-        Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        // float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
+        // Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
         // printMatrix(C,aRows,bCols);
         // printf("IsEqual = %d\n\n",IsEqual(C_serial,C,aRows,bCols));
     }
