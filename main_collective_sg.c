@@ -60,7 +60,7 @@ int main(int argc, char**argv){
     
     if(rank==0){
 
-        printf("Collective SG \n");
+        // printf("Collective SG \n");
         
        
         aRowsActual = atoi(argv[1]);
@@ -175,8 +175,8 @@ int main(int argc, char**argv){
         float * C_serial = (float *)malloc(sizeof(float)*aRows*bCols);
         Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
         
-        printf("time = %f seconds\n",end - begin);
-        printf("IsEqual = %d \n\n",IsEqual(C_serial,C,aRows,bCols));
+        printf("collective sg time = %f seconds\n",end - begin);
+        // printf("IsEqual = %d \n\n",IsEqual(C_serial,C,aRows,bCols));
 
     }
 

@@ -54,7 +54,7 @@ int main(int argc, char**argv){
     }
 
     if(rank==0){
-        printf("Collective \n");
+        // printf("Collective \n");
         
        
         int aRows = atoi(argv[1]);
@@ -91,7 +91,7 @@ int main(int argc, char**argv){
         nRows = aRows/numProcesses;
         numExtraRows = aRows%numProcesses;
       
-        printf("number of processes=%d, number of extra workers = %d\n",numProcesses,numWorkers);
+        // printf("number of processes=%d, number of extra workers = %d\n",numProcesses,numWorkers);
 
         int startRow = 0;
         MPI_Bcast(&aCols,1,MPI_INT,0,MPI_COMM_WORLD);
@@ -142,7 +142,7 @@ int main(int argc, char**argv){
         }
         double endTime = MPI_Wtime();
 
-        printf("time = %lf seconds\n",endTime-beginTime);
+        printf("collective time = %lf seconds\n",endTime-beginTime);
         
 
         float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
@@ -150,7 +150,7 @@ int main(int argc, char**argv){
         // printMatrix(C,aRows,bCols);
         // printMatrix(C_serial,aRows,bCols);
 
-        printf("IsEqual = %d\n\n",IsEqual(C_serial,C,aRows,bCols));
+        // printf("IsEqual = %d\n\n",IsEqual(C_serial,C,aRows,bCols));
     }
     else{
         MPI_Status status;

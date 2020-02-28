@@ -54,7 +54,7 @@ int main(int argc, char**argv){
     }
 
     if(rank==0){
-       printf("Blocking \n");
+      //  printf("Blocking \n");
        
        
         int aRows = atoi(argv[1]);
@@ -84,7 +84,7 @@ int main(int argc, char**argv){
         }
         double beginTime = MPI_Wtime();
         int numWorkers = numProcesses -1;
-        printf("number of processes = %d, number of additional labourers = %d\n",numProcesses,numWorkers);
+        // printf("number of processes = %d, number of additional labourers = %d\n",numProcesses,numWorkers);
         int nRows=0;
         int numExtraRows = 0;
         
@@ -144,14 +144,20 @@ int main(int argc, char**argv){
         }
         double endTime = MPI_Wtime();
 
-        printf("time = %lf seconds\n",endTime-beginTime);
+        printf("blocking time = %lf seconds\n",endTime-beginTime);
         
 
-
+        
         float * C_serial = (float *)malloc(sizeof(float * )*aRows*bCols);
+        
+        beginTime = MPI_Wtime();
         Multiply_serial(A,B,C_serial,aRows,aCols,bCols);
+        endTime = MPI_Wtime();
+
+        printf("serial time = %lf seconds\n",endTime-beginTime);
+        
         // printMatrix(C,aRows,bCols);
-        printf("IsEqual = %d\n\n",IsEqual(C_serial,C,aRows,bCols));
+        // printf("IsEqual = %d\n\n",IsEqual(C_serial,C,aRows,bCols));
     }
     else{
         MPI_Status status;
