@@ -55,3 +55,18 @@ bash run.sh 1600 16 > Data/1600_16.txt
 bash run.sh 3200 16 > Data/3200_16.txt
 bash run.sh 6400 16 > Data/6400_16.txt
 bash run.sh 12800 16 > Data/12800_16.txt
+
+
+bash run.sh 8000 2 > Data/8000_2.txt
+bash run.sh 8000 4 > Data/8000_4.txt
+bash run.sh 8000 6 > Data/8000_6.txt
+bash run.sh 8000 8 > Data/8000_8.txt
+bash run.sh 8000 12 > Data/8000_12.txt
+bash run.sh 8000 16 > Data/8000_16.txt
+
+bash run.sh 10000 2 > Data/10000_2.txt
+bash run.sh 10000 4 > Data/10000_4.txt
+bash run.sh 10000 6 > Data/10000_6.txt
+bash run.sh 10000 8 > Data/10000_8.txt
+bash run.sh 10000 12 > Data/10000_12.txt
+bash run.sh 10000 16 > Data/10000_16.txt
